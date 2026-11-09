@@ -11,3 +11,7 @@ class LLMTimeoutError(LLMError):
 
 class LLMAPIError(LLMError):
     """A API do LLM devolveu erro (chave inválida, limite de uso, instabilidade...)."""
+
+
+class LLMInvalidResponseError(LLMError):
+    """O LLM respondeu, mas fora do formato esperado, mesmo após as tentativas."""
