@@ -1,12 +1,12 @@
 from functools import lru_cache
 from typing import Annotated
-from app.llm.gemini import GeminiClient
 
 from fastapi import Depends
 
 from app.config import Settings
 from app.llm.base import LLMClient
 from app.llm.fake import FakeLLMClient
+from app.llm.gemini import GeminiClient
 from app.services.triage import TriageService
 
 
