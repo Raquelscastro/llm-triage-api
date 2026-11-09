@@ -1,5 +1,6 @@
 from functools import lru_cache
 from typing import Annotated
+from app.llm.gemini import GeminiClient
 
 from fastapi import Depends
 
@@ -17,10 +18,15 @@ def get_settings() -> Settings:
 
 def get_llm_client(settings: Annotated[Settings, Depends(get_settings)]) -> LLMClient:
     """Escolhe qual fogão usar. É o ÚNICO lugar que decide isso."""
-    if settings.llm_provider == "fake":
-        return FakeLLMClient()
-    # Na Fase 2, o cliente real entra aqui.
-    raise RuntimeError(f"Provedor de LLM não suportado: {settings.llm_provider}")
+    if settings.llm_provider == "gemini":
+        if settings.gemini_api_key is None:
+            raise RuntimeError("LLM_PROVIDER=gemini, mas a GEMINI_API_KEY não está no .env.")
+        return GeminiClient(
+            api_key=settings.gemini_api_key.get_secret_value(),
+            model=settings.gemini_model,
+            timeout_seconds=settings.llm_timeout_seconds,
+        )
+    return FakeLLMClient()
 
 
 def get_triage_service(llm: Annotated[LLMClient, Depends(get_llm_client)]) -> TriageService:
