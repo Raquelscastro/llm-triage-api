@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     # Para usar o valor de verdade: settings.gemini_api_key.get_secret_value()
     gemini_api_key: SecretStr | None = None
 
-    gemini_model: str = "gemini-flash-latest"
+    gemini_model: str = "gemini-3.5-flash-lite"
 
     # Quanto tempo esperar a resposta do LLM antes de desistir. Precisa ser maior que zero.
     llm_timeout_seconds: float = Field(default=20.0, gt=0)
