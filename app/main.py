@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from app.error_handlers import register_error_handlers
 from app.routes import health, triage
 
 
@@ -8,6 +9,7 @@ def create_app() -> FastAPI:
     app = FastAPI(title="API de Triagem de Mensagens", version="0.1.0")
     app.include_router(health.router)
     app.include_router(triage.router)
+    register_error_handlers(app)
     return app
 
 
