@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: triage_user
+      POSTGRES_DB: triage_db
+      # A senha vem do .env. Se faltar, o compose para e avisa.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
+    ports:
+      # 127.0.0.1: só o seu computador acessa o banco.
+      # 5434 por fora: evita choque se você já tiver um Postgres na 5432.
+      - "127.0.0.1:5434:5432"
+    volumes:
+      # A gaveta: os dados sobrevivem mesmo se a caixa for recriada.
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      # Pergunta de tempos em tempos: "o caderno já está pronto para uso?"
+      test: ["CMD-SHELL", "pg_isready -U triage_user -d triage_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  db_data:
