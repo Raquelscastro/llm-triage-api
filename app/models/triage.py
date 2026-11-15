@@ -25,6 +25,4 @@ class TriageRecord(Base):
     summary: Mapped[str] = mapped_column(String(200))
 
     # O próprio banco carimba a data e a hora, com fuso horário.
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

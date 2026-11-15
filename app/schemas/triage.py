@@ -33,6 +33,7 @@ class TriageResult(BaseModel):
     urgency: Urgency
     summary: str = Field(max_length=200)
 
+
 class TriageRead(BaseModel):
     """Uma linha do caderno, como a API devolve na consulta."""
 

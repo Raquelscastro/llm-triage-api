@@ -30,6 +30,4 @@ def list_triages(
     offset: Annotated[int, Query(ge=0)] = 0,
 ) -> list[TriageRecord]:
     """Consulta o caderno, com filtros opcionais por categoria e urgência."""
-    return repository.list_triages(
-        category=category, urgency=urgency, limit=limit, offset=offset
-    )
+    return repository.list_triages(category=category, urgency=urgency, limit=limit, offset=offset)
