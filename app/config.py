@@ -22,3 +22,7 @@ class Settings(BaseSettings):
 
     # Quanto tempo esperar a resposta do LLM antes de desistir. Precisa ser maior que zero.
     llm_timeout_seconds: float = Field(default=20.0, gt=0)
+
+    # Endereço do banco. SecretStr porque a URL contém a senha.
+    # Sem valor padrão de propósito: se faltar no .env, o app nem liga (fail fast).
+    database_url: SecretStr
