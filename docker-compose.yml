@@ -4,21 +4,37 @@ services:
     environment:
       POSTGRES_USER: triage_user
       POSTGRES_DB: triage_db
-      # A senha vem do .env. Se faltar, o compose para e avisa.
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
     ports:
-      # 127.0.0.1: só o seu computador acessa o banco.
-      # 5434 por fora: evita choque se você já tiver um Postgres na 5432.
       - "127.0.0.1:5434:5432"
     volumes:
-      # A gaveta: os dados sobrevivem mesmo se a caixa for recriada.
       - db_data:/var/lib/postgresql/data
     healthcheck:
-      # Pergunta de tempos em tempos: "o caderno já está pronto para uso?"
       test: ["CMD-SHELL", "pg_isready -U triage_user -d triage_db"]
       interval: 5s
       timeout: 3s
       retries: 10
+
+  api:
+    build: .
+    # A chave do Gemini e o resto das configurações vêm do .env.
+    env_file: .env
+    environment:
+      # Dentro do Docker o banco se chama "db" e usa a porta 5432.
+      # Esta linha vale mais do que a DATABASE_URL do .env.
+      DATABASE_URL: postgresql+psycopg://triage_user:${POSTGRES_PASSWORD}@db:5432/triage_db
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8000:8000"
+    # Aplica as migrations e só depois liga a API.
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
 volumes:
   db_data:
